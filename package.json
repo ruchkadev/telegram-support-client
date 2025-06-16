@@ -1,0 +1,19 @@
+{
+  "devDependencies": {
+    "@tauri-apps/api": "^2.5.0",
+    "@tauri-apps/cli": "^2.5.0"
+  },
+  "scripts": {
+    "tauri": "tauri",
+      "tauri:dev": "tauri dev",
+  "tauri:build": "tauri build",
+    "start": "npm run tauri dev"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "lowdb": "^7.0.1",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}

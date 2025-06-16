@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Telegram Support</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #222;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #login, #main {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      animation: fadeIn 0.5s ease;
+    }
+
+    #login {
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+
+    #login h2 {
+      margin-bottom: 24px;
+      font-weight: 600;
+      font-size: 24px;
+      color: #111;
+    }
+
+    #login input {
+      width: 320px;
+      max-width: 90vw;
+      padding: 14px 16px;
+      font-size: 16px;
+      margin-bottom: 16px;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      transition: border-color 0.3s ease;
+    }
+
+    #login input:focus {
+      outline: none;
+      border-color: #2196f3;
+    }
+
+    #login button {
+      width: 320px;
+      max-width: 90vw;
+      padding: 14px 0;
+      font-size: 16px;
+      background-color: #2196f3;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    #login button:hover {
+      background-color: #1976d2;
+    }
+
+    #error {
+      margin-top: 12px;
+      color: #e53935;
+      font-weight: 600;
+      display: none;
+    }
+
+    /* Main layout */
+    #main {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #header {
+      flex-shrink: 0;
+      padding: 16px 24px;
+      background-color: #f5f5f7;
+      font-weight: 600;
+      font-size: 20px;
+      border-bottom: 1px solid #ddd;
+      color: #222;
+      user-select: none;
+    }
+
+    #content {
+      flex: 1;
+      display: flex;
+      height: calc(100vh - 64px);
+    }
+
+    #sidebar {
+      width: 280px;
+      background-color: #fafafa;
+      border-right: 1px solid #ddd;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      box-shadow: inset -1px 0 0 #ddd;
+    }
+
+    #users {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #users li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      font-weight: 500;
+      color: #333;
+      user-select: none;
+    }
+
+    #users li:hover {
+      background-color: #e3f2fd;
+      color: #0d47a1;
+    }
+
+    #users li.active {
+      background-color: #2196f3;
+      color: white;
+      font-weight: 700;
+    }
+
+    #users li.active svg {
+      stroke: white;
+    }
+
+    #users li.active span small {
+      color: white;
+    }
+
+    /* Иконка человека */
+    #users li svg {
+      width: 20px;
+      height: 20px;
+      stroke: #2196f3;
+      stroke-width: 2;
+      fill: none;
+      transition: stroke 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    #chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #fff;
+    }
+
+    #messages {
+      flex: 1;
+      padding: 20px 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background-color: #f9fafb;
+    }
+
+    .message {
+      padding: 14px 18px;
+      border-radius: 12px;
+      max-width: 70%;
+      font-size: 15px;
+      line-height: 1.4;
+      animation: fadeIn 0.3s ease;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+      word-break: break-word;
+    }
+
+    .user {
+      background-color: #e3f2fd;
+      align-self: flex-start;
+      color: #0d47a1;
+    }
+
+    .support {
+      background-color: #d0f0da;
+      align-self: flex-end;
+      color: #2e7d32;
+    }
+
+    #form {
+      flex-shrink: 0;
+      display: flex;
+      padding: 14px 20px;
+      border-top: 1px solid #ddd;
+      background-color: #fafafa;
+    }
+
+    #text {
+      flex: 1;
+      padding: 14px 16px;
+      font-size: 15px;
+      border: 1.5px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    #text:focus {
+      border-color: #2196f3;
+    }
+
+    #sendBtn {
+      margin-left: 14px;
+      padding: 14px 28px;
+      background-color: #2196f3;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+      user-select: none;
+    }
+
+    #sendBtn:hover {
+      background-color: #1976d2;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="login">
+    <h2>Введите токен Telegram-бота</h2>
+    <input type="text" id="tokenInput" placeholder="Ваш токен" />
+    <button onclick="startBot()">Запустить бота</button>
+    <p id="error">Ошибка запуска бота</p>
+  </div>
+
+  <div id="main" style="display:none;">
+    <div id="header">Загрузка...</div>
+    <div id="content">
+      <div id="sidebar">
+        <ul id="users"></ul>
+      </div>
+      <div id="chat">
+        <div id="messages"></div>
+        <div id="form">
+          <input
+            type="text"
+            id="text"
+            placeholder="Введите сообщение..."
+            onkeydown="if(event.key==='Enter') sendMessage()"
+          />
+          <button id="sendBtn" onclick="sendMessage()">Отправить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedChatId = null;
+    let lastMessages = [];
+    let lastUsers = [];
+
+    async function startBot() {
+      const token = document.getElementById('tokenInput').value.trim();
+      if (!token) return;
+
+      const res = await fetch('http://localhost:3000/start-bot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+
+      if (res.ok) {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('main').style.display = 'flex';
+        loadBotInfo();
+        loadUsers();
+        setInterval(() => {
+          loadUsers();
+          if (selectedChatId) loadMessages();
+        }, 3000);
+      } else {
+        const errorEl = document.getElementById('error');
+        errorEl.style.display = 'block';
+      }
+    }
+
+    async function loadBotInfo() {
+      const res = await fetch('http://localhost:3000/bot-info');
+      const data = await res.json();
+      document.getElementById('header').textContent = `Бот: @${data.username} (${data.first_name})`;
+    }
+
+    async function loadUsers() {
+      const res = await fetch('http://localhost:3000/chat_ids');
+      const ids = await res.json();
+      if (JSON.stringify(ids) === JSON.stringify(lastUsers)) return;
+      lastUsers = ids;
+
+      const list = document.getElementById('users');
+      list.innerHTML = '';
+      ids.forEach((id) => {
+        const li = document.createElement('li');
+
+        // Добавляем иконку человека (SVG)
+        li.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2196f3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="7" r="4"></circle>
+            <path d="M5.5 21h13a2 2 0 0 0-13 0z"></path>
+          </svg>
+          <span>Пользователь <small>${id}</small></span>
+        `;
+
+        li.onclick = () => selectChat(id, li);
+        if (id == selectedChatId) li.classList.add('active');
+        list.appendChild(li);
+      });
+    }
+
+    async function selectChat(id, li) {
+      selectedChatId = id;
+      document.querySelectorAll('#users li').forEach((el) => el.classList.remove('active'));
+      li.classList.add('active');
+      await loadMessages();
+    }
+
+    async function loadMessages() {
+      if (!selectedChatId) return;
+      const res = await fetch(`http://localhost:3000/messages?chat_id=${selectedChatId}`);
+      const messages = await res.json();
+      if (JSON.stringify(messages) === JSON.stringify(lastMessages)) return;
+      lastMessages = messages;
+
+      const container = document.getElementById('messages');
+      container.innerHTML = '';
+      messages.forEach((m) => {
+        const div = document.createElement('div');
+        div.className = `message ${m.from}`;
+        div.textContent = m.text;
+        container.appendChild(div);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('text');
+      const text = input.value.trim();
+      if (!text || !selectedChatId) return;
+
+      const res = await fetch('http://localhost:3000/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: selectedChatId, text }),
+      });
+
+      if (res.ok) {
+        input.value = '';
+        await loadMessages();
+      }
+    }
+  </script>
+</body>
+</html>
